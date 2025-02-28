@@ -1,0 +1,27 @@
+- name: Clone application repository
+  git:
+    repo: "{{ app_repo_url }}"
+    dest: /home/ubuntu/DevOps-Stage-4
+    version: main
+    force: yes
+
+- name: Ensure letsencrypt directory exists
+  file:
+    path: /home/ubuntu/DevOps-Stage-4/letsencrypt
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    mode: '0755'
+
+- name: Create acme.json for Traefik
+  file:
+    path: /home/ubuntu/DevOps-Stage-4/letsencrypt/acme.json
+    state: touch
+    owner: ubuntu
+    group: ubuntu
+    mode: '0600'
+
+- name: Build and deploy application with Docker Compose
+  command: docker-compose up -d --build
+  args:
+    chdir: /home/ubuntu/DevOps-Stage-4
